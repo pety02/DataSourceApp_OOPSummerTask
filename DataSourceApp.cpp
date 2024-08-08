@@ -5,6 +5,7 @@
 #include <cstring>
 #include <fstream>
 
+// commented
 int fib(int n) {
     if(n == 0) {
         return 0;
