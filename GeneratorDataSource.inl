@@ -18,6 +18,7 @@ inline Vector<T> GeneratorDataSource<T>::getSequence(int count)
 {
 	Vector<T> v = this->fnc(count);
 	this->lastGeneratedEl = v.size();
+	this->currDataIndex += v.size();
 	return v;
 }
 
@@ -26,6 +27,7 @@ inline T& GeneratorDataSource<T>::get()
 {
 	this->data = this->getSequence(this->lastGeneratedEl + 1);
 	T& toBeReturned = this->data[this->lastGeneratedEl - 1];
+	this->currDataIndex++;
 	return toBeReturned;
 }
 

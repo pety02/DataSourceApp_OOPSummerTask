@@ -88,7 +88,7 @@ Vector<char*> generateWord(int count) {
     return *v;
 }
 
-int main() {
+int main() { 
     // First sub-task - generating 25 random words with length of 10 lowercase latin letters. 
     Vector<char*> (*wordsGeneratorFnc)(int);
     wordsGeneratorFnc = &generateWord;
@@ -118,7 +118,7 @@ int main() {
     DataSource<int>* alternateSrc = new AlternateDataSource<int>(sources, SOURCES_COUNT);
     const int SEQUENCE_SAMPLES_COUNT = 1000;
     Vector<int> v = alternateSrc->getSequence(SEQUENCE_SAMPLES_COUNT);
-    
+    std::cout << "size = " << v.size() << std::endl;
     // Typing filename of binary file to store in it the sequence of 1000 samples of alternateSrc and writing in this file.
     std::cout << "Enter binary file name: ";
     const int MAX_FILENAME_LENGTH = 256;

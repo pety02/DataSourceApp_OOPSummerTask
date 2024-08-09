@@ -10,7 +10,7 @@ inline void Vector<T>::copy(const Vector<T>& other)
     this->capacity = other.capacity;
     this->index = other.index;
     this->data = new T[other.capacity];
-    for (int i = 0; i < other.index; ++i) {
+    for (int i = 0; i < other.index; ++i) {  
         this->data[i] = other.data[i];
     }
 }
@@ -31,10 +31,7 @@ inline void Vector<T>::resize()
     }
 
     this->destroy();
-    this->data = new T[this->capacity];
-    for (int i = 0; i < this->index; ++i) {
-        this->data[i] = temp[i];
-    }
+    this->data = temp;
 }
 
 template <typename T>
@@ -56,6 +53,8 @@ inline Vector<T>::Vector(Vector<T>&& other) noexcept
 {
     this->copy(other);
     other.data = nullptr;
+    other.capacity = 8;
+    other.index = 0;
 }
 
 template <typename T>
@@ -77,6 +76,8 @@ inline Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept
         this->copy(other);
 
         other.data = nullptr;
+        other.capacity = 8;
+        other.index = 0;
     }
 
     return *this;
@@ -91,7 +92,7 @@ inline Vector<T>::~Vector()
 template <typename T>
 inline T& Vector<T>::operator[](int index)
 {
-    if (this->index < index) {
+    if (this->index <= index) {
         throw std::out_of_range("Index out of bound!");
     }
 
@@ -101,7 +102,7 @@ inline T& Vector<T>::operator[](int index)
 template <typename T>
 inline const T Vector<T>::operator[](int index) const
 {
-    if (this->size < index) {
+    if (this->size <= index) {
         throw std::out_of_range("Index out of bound!");
     }
 

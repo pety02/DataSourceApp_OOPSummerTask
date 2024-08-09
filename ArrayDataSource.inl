@@ -36,30 +36,39 @@ inline Vector<T> ArrayDataSource<T>::getSequence(int count)
 template <typename T>
 inline const ArrayDataSource<T>& ArrayDataSource<T>::operator+(const T& el) const
 {
-    ArrayDataSource<T>* src = this;
-    src->data.append(el);
-
-    return *src;
+    ArrayDataSource<T>* result = new ArrayDataSource<T>(*this);  
+    *result += el;   
+    result->currDataIndex++;                   
+    return *result; 
 }
 
 template <typename T>
-inline ArrayDataSource<T>& ArrayDataSource<T>::operator+=(const T& el)
+inline ArrayDataSource<T>& ArrayDataSource<T>::operator+=(T el)
 {
     this->data.append(el);
+    this->currDataIndex++;
     return *this;
 }
 
 template <typename T>
-inline ArrayDataSource<T>& ArrayDataSource<T>::operator-()
+inline ArrayDataSource<T>& ArrayDataSource<T>::operator--()
 {
-    this->currDataIndex--;
+    if(0 < this->data.size()) {
+        this->currDataIndex;
+        this->data.remove(0);
+    }
+
     return *this;
 }
 
 template <typename T>
-inline ArrayDataSource<T>& ArrayDataSource<T>::operator-(int)
+inline ArrayDataSource<T>& ArrayDataSource<T>::operator--(int)
 {
-    this->currDataIndex--;
+    if(0 < this->data.size()) {
+        this->currDataIndex;
+        this->data.remove(0);
+    }
+
     return *this;
 }
 

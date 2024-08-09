@@ -36,9 +36,11 @@ inline AlternateDataSource<T>::AlternateDataSource(DataSource<T>* sources[], int
             DataSource<T>* currSourcePtr = sources[j];
             if (dynamic_cast<GeneratorDataSource<T>*>(currSourcePtr) == nullptr) {
                 this->data.append(currSourcePtr->getData()[i]);
+                this->currDataIndex++;
             }
             else {
                 this->data.append(currSourcePtr->get());
+                this->currDataIndex++;
             }
         }
     }
@@ -51,7 +53,6 @@ inline Vector<T> AlternateDataSource<T>::getSequence(int count)
     int minCount = std::min(this->data.size(), count);
     for (int i = 0; i < minCount; ++i) {
         current.append(this->data[i]);
-        this->currDataIndex++;
     }
     
     for (int i = this->currDataIndex; i < count;) {

@@ -28,7 +28,6 @@ inline FileDataSource<T>::FileDataSource()
 template <typename T>
 inline FileDataSource<T>::FileDataSource(const char* filename)
 {
-    //this->data = Vector<T>();
     this->filename = new char[std::strlen(filename) + 1];
     this->filename = std::strcpy(this->filename, filename);
 
@@ -40,6 +39,7 @@ inline FileDataSource<T>::FileDataSource(const char* filename)
     int dataCount;
     file.read(reinterpret_cast<char*>(&dataCount), sizeof(dataCount));
     file.read(reinterpret_cast<char*>(&this->data), sizeof(this->data));
+    this->currDataIndex += this->data.size();
 
     file.close();
 }

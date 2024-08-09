@@ -13,7 +13,7 @@ inline DefaultDataSource<T>::DefaultDataSource() {
 template <typename T>
 inline T& DefaultDataSource<T>::get() {
     if (this->hasNext()) {
-        return this->data[++this->currDataIndex];
+        return this->data[this->currDataIndex++];
     }
 
     T* current = new T();
