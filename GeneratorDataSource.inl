@@ -9,35 +9,33 @@ inline GeneratorDataSource<T>::GeneratorDataSource()
 {
 	this->data = Vector<T>();
 	this->currDataIndex = 0;
-	this->fnc = nullptr;
+	Vector<T>(*this->fnc)();
+	this->lastGeneratedEl = 0;
 }
 
 template<typename T>
 inline Vector<T> GeneratorDataSource<T>::getSequence(int count)
 {
-	//int minCount = std::min(this->data.size(), count);
-	for (int i = 1; i < count; ++i) {
-		this->get();
-	}
-	return this->data;
+	Vector<T> v = this->fnc(count);
+	this->lastGeneratedEl = v.size();
+	return v;
 }
 
 template<typename T>
 inline T& GeneratorDataSource<T>::get()
 {
-	T* currData = new T();
-	*currData = this->fnc((T)(this->currDataIndex++));
-	this->data.append(*currData);
-	return *currData;
+	this->data = this->getSequence(this->lastGeneratedEl + 1);
+	T& toBeReturned = this->data[this->lastGeneratedEl - 1];
+	return toBeReturned;
 }
 
 template<typename T>
-inline GeneratorDataSource<T>::GeneratorDataSource(T(*generatorFunc)(T num))
+inline GeneratorDataSource<T>::GeneratorDataSource(Vector<T>(*generatorFunc)(int count))
 {
 	this->fnc = generatorFunc;
-	this->data = Vector<T>();
 	this->currDataIndex = 0;
-	this->data.append(generatorFunc((T)(this->currDataIndex++)));
+	this->data = generatorFunc(0);
+	this->lastGeneratedEl = 0;
 }
 
 #endif

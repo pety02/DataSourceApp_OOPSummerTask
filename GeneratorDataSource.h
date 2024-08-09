@@ -9,9 +9,10 @@ class GeneratorDataSource final : public DataSource<T>
 {
 private:
 	GeneratorDataSource();
-	T(*fnc)(T);
+	Vector<T>(*fnc)(int);
+	int lastGeneratedEl;
 public:
-	GeneratorDataSource(T(*)(T));
+	GeneratorDataSource(Vector<T>(*)(int));
 	Vector<T> getSequence(int) override;
 	T& get() override;
 };

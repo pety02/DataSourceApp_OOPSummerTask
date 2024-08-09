@@ -5,7 +5,7 @@
 #include <cstring>
 #include <fstream>
 
-int fib(int n) {
+int fibHelper(int n) {
     if(n == 0) {
         return 0;
     }
@@ -13,18 +13,62 @@ int fib(int n) {
         return 1;
     }
 
-    return fib(n - 1) + fib(n - 2);
+    return fibHelper(n - 1) + fibHelper(n - 2);
 }
 
-int odd(int n) {
-    return n % 2 == 0 ? n + 1 : n;
+Vector<int> fib(int count) {
+    Vector<int>* v = new Vector<int>();
+    int initial = 0;
+    while(initial < count) {
+        v->append(fibHelper(initial));
+        initial++;
+    }
+
+    return *v;
 }
 
-int rand(int n) {
+int oddHelper(int n) {
+    return n % 2 == 0 ? n + 1 : n + 2;
+}
+
+Vector<int> odd(int count) {
+    Vector<int>* v = new Vector<int>();
+    int initial = 0, counter = 0;
+    while(counter < count) {
+        if(initial % 2 == 0) {
+            initial += 1;
+        } else {
+            initial += 2;
+        }
+
+        if(v->size() == 0) {
+            v->append(initial);
+            counter++;
+        }
+        int lastIndex = v->size() - 1;
+        if((*v)[lastIndex] < initial) {
+            v->append(initial);
+            counter++;
+        }
+    }
+
+    return *v;
+}
+
+int randHelper(int n) {
     return std::rand() + n;
 }
 
-char* generateWord(char* word) {
+Vector<int> rand(int count) {
+    Vector<int>* v = new Vector<int>();
+    for(int i = 0; i < count; ++i) {
+        v->append(randHelper(i));
+    }
+
+    return *v;
+}
+
+char* generateWordHelper(char* word) {
     word = new char[10];
 
     for(int i = 0; i < 10; ++i) {
@@ -34,22 +78,31 @@ char* generateWord(char* word) {
     return word;
 }
 
+Vector<char*> generateWord(int count) {
+    Vector<char*>* v = new Vector<char*>();
+    for(int i = 0; i < count; ++i) {
+        char* currWord = new char[10];
+        v->append(generateWordHelper(currWord));
+    }
+
+    return *v;
+}
+
 int main() {
     // First sub-task - generating 25 random words with length of 10 lowercase latin letters. 
-    char* (*wordsGeneratorFnc)(char*);
+    Vector<char*> (*wordsGeneratorFnc)(int);
     wordsGeneratorFnc = &generateWord;
     DataSource<char*>* charsSrc = new GeneratorDataSource<char*>(wordsGeneratorFnc);
     charsSrc->getSequence(25).print();
 
     // Second sub-task
     // Creating pointers to helper functions above.
-    int (*oddFncPtr)(int);
+    Vector<int> (*oddFncPtr)(int);
     oddFncPtr = &odd;
-    int (*randFncPtr)(int);
+    Vector<int> (*randFncPtr)(int);
     randFncPtr = &rand;
-    int (*fibFncPtr)(int);
+    Vector<int> (*fibFncPtr)(int);
     fibFncPtr = &fib;
-
     // Creating three generators for odd, random and fibonacci numbers.
     DataSource<int>* oddNumbersGen = new GeneratorDataSource<int>(oddFncPtr);
     DataSource<int>* randNumbersGen = new GeneratorDataSource<int>(randFncPtr);
@@ -71,7 +124,7 @@ int main() {
     const int MAX_FILENAME_LENGTH = 256;
     char* filename = new char [MAX_FILENAME_LENGTH];
     std::cin.getline(filename, MAX_FILENAME_LENGTH);
-    std::ofstream out(filename, std::ios::binary | std::ios::app);
+    std::ofstream out(filename, std::ios::binary);
     if (!out) {
         std::cerr << "Failed to open file: " << filename << std::endl;
         return 1;
@@ -82,13 +135,17 @@ int main() {
 
     // Reading from this file, fileSrc initialization with the read numbers and printing them.
     DataSource<int>* fileSrc = new FileDataSource<int>(filename);
+    std::cout << "vector length: " << fileSrc->getData().size() << std::endl;
     fileSrc->getData().print(); 
 
     // Realising memory.
-    delete[] fileSrc;
+    delete charsSrc;
+    delete fileSrc;
+    delete alternateSrc;
+    delete fibonacciGen;
+    delete randNumbersGen;
+    delete oddNumbersGen;
     delete[] filename;
-    delete[] alternateSrc;
-    delete[] charsSrc;
 
     return 0;
 }

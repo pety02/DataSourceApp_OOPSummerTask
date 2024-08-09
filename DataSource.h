@@ -10,7 +10,6 @@ class DataSource {
 protected:
     Vector<T> data;
     int currDataIndex;
-
 public:
     DataSource();
     virtual T& get();
@@ -18,7 +17,6 @@ public:
     bool hasNext() const;
     void reset();
     T& operator()() const;
-    //friend std::istream& operator>>(std::istream&, DataSource*);  // TODO: to think it
     operator bool();
     virtual ~DataSource();
     Vector<T> getData();
