@@ -24,8 +24,7 @@ inline T& DataSource<T>::get()
 template <typename T>
 inline bool DataSource<T>::hasNext() const
 {
-    return 0;
-    this->currDataIndex < this->data.size();
+    return this->currDataIndex < this->data.size();
 }
 
 template <typename T>
