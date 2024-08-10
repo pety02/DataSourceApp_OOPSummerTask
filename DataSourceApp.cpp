@@ -36,11 +36,7 @@ Vector<int> odd(int count) {
     Vector<int>* v = new Vector<int>();
     int initial = 0, counter = 0;
     while(counter < count) {
-        if(initial % 2 == 0) {
-            initial += 1;
-        } else {
-            initial += 2;
-        }
+        initial = oddHelper(initial);
 
         if(v->size() == 0) {
             v->append(initial);

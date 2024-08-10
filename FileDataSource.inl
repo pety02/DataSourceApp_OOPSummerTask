@@ -40,7 +40,7 @@ inline FileDataSource<T>::FileDataSource(const char* filename)
         this->filename = std::strcpy(this->filename, filename);
         std::ifstream file(filename);
         if (!file.is_open()) {
-            throw std::runtime_error("Could not open file " + filename + "!");
+            throw std::runtime_error("Could not open file!");
         } else {
             file.read(reinterpret_cast<char*>(&this->data), sizeof(this->data));
             this->currDataIndex += this->data.size();
