@@ -112,8 +112,13 @@ int main() {
     // Creating an array of the generators above.
     const int SOURCES_COUNT = 3;
     const int FIBONACCI_SAMPLES_COUNT = 25;
-    DataSource<int>* sources[SOURCES_COUNT] = {oddNumbersGen, randNumbersGen, new ArrayDataSource<int>(
-        fibonacciGen->getSequence(FIBONACCI_SAMPLES_COUNT).getData(), FIBONACCI_SAMPLES_COUNT)};
+    DataSource<int>* sources[SOURCES_COUNT] = {
+        oddNumbersGen, 
+        randNumbersGen, 
+        new ArrayDataSource<int>(fibonacciGen
+            ->getSequence(FIBONACCI_SAMPLES_COUNT)
+            .getData(), FIBONACCI_SAMPLES_COUNT)
+        };
     
     // Creating the base alternate generator.
     DataSource<int>* alternateSrc = new AlternateDataSource<int>(sources, SOURCES_COUNT);
@@ -130,7 +135,6 @@ int main() {
         return 1;
     }
     Vector<int> v = alternateSrc->getSequence(SEQUENCE_SAMPLES_COUNT);
-    out.write(reinterpret_cast<const char*>(&SEQUENCE_SAMPLES_COUNT), sizeof(SEQUENCE_SAMPLES_COUNT));
     out.write(reinterpret_cast<const char*>(&v), sizeof(v));
     out.close();
 

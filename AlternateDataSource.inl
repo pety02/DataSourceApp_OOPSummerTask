@@ -140,15 +140,20 @@ inline Vector<T> AlternateDataSource<T>::getSequence(int count)
     }
     
     for (int i = this->currDataIndex; i < count;) {
-        for(int j = 0; j < 3; ++j) {
+        for(int j = 0; j < this->sourcesCount; ++j) {
             if(i == count) {
                 break;
             }
             DataSource<T>* currSourcePtr = this->sources[j];
             if (dynamic_cast<GeneratorDataSource<T>*>(currSourcePtr) != nullptr) {
-                this->miniedData.append(currSourcePtr->get());
-                i++;
-                this->currDataIndex++;
+                try {
+                    T el = currSourcePtr->get();
+                    this->miniedData.append(el);
+                    i++;
+                    this->currDataIndex++;
+                } catch (std::out_of_range& ex) {
+                    break;
+                } 
             }
         }
     }

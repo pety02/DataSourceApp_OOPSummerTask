@@ -18,8 +18,10 @@ public:
     virtual Vector<T> getSequence(int) = 0; 
     virtual bool hasNext() const;
     virtual bool reset(); 
-    T& operator()() const;
-    operator bool(); 
+    T& operator()();
+    explicit operator bool() const {
+        return this->hasNext();
+    }
     virtual ~DataSource();
     Vector<T> getAllData() const;
     Vector<T> getData() const ;

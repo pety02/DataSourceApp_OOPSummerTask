@@ -28,8 +28,13 @@ inline Vector<T> ArrayDataSource<T>::getSequence(int count)
 {
     int minCount = std::min(this->data.size(), count);
     for (int i = 0; i < minCount; ++i) {
-        this->miniedData.append(this->data[i]);
-        this->currDataIndex++;
+        try {
+            T el = this->data[i];
+            this->miniedData.append(el);
+            this->currDataIndex++;
+        } catch (std::out_of_range& ex) {
+            break;
+        }
     }
     return this->miniedData;
 }

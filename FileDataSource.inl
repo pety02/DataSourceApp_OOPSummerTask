@@ -32,23 +32,27 @@ inline FileDataSource<T>::FileDataSource()
 template <typename T>
 inline FileDataSource<T>::FileDataSource(const char* filename)
 {
-    this->data = Vector<T>();
-    this->miniedData = Vector<T>();
-    this->currDataIndex = 0;
-    this->filename = new char[std::strlen(filename) + 1];
-    this->filename = std::strcpy(this->filename, filename);
-
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        throw std::runtime_error("Could not open file");
+    try {
+        this->data = Vector<T>();
+        this->miniedData = Vector<T>();
+        this->currDataIndex = 0;
+        this->filename = new char[std::strlen(filename) + 1];
+        this->filename = std::strcpy(this->filename, filename);
+        std::ifstream file(filename);
+        if (!file.is_open()) {
+            throw std::runtime_error("Could not open file " + filename + "!");
+        } else {
+            file.read(reinterpret_cast<char*>(&this->data), sizeof(this->data));
+            this->currDataIndex += this->data.size();
+            file.close();
+        }
+    } catch (std::exception& ex) {
+        this->data = Vector<T>();
+        this->miniedData = Vector<T>();
+        this->currDataIndex = 0;
+        this->filename = new char[std::strlen(filename) + 1];
+        this->filename = std::strcpy(this->filename, filename);
     }
-
-    int dataCount;
-    file.read(reinterpret_cast<char*>(&dataCount), sizeof(dataCount));
-    file.read(reinterpret_cast<char*>(&this->data), sizeof(this->data));
-    this->currDataIndex += this->data.size();
-
-    file.close();
 }
 
 template <typename T>

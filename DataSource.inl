@@ -44,15 +44,9 @@ inline bool DataSource<T>::reset()
 }
 
 template <typename T>
-inline T& DataSource<T>::operator()() const
+inline T& DataSource<T>::operator()()
 {
     return this->get();
-}
-
-template <typename T>
-inline DataSource<T>::operator bool()
-{
-    return this->hasNext();
 }
 
 template <typename T>
