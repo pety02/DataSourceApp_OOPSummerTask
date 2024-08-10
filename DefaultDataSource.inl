@@ -7,33 +7,30 @@
 template <typename T>
 inline DefaultDataSource<T>::DefaultDataSource() {
     this->data = Vector<T>();
+    this->miniedData = Vector<T>();
     this->currDataIndex = 0;
 }
 
 template <typename T>
 inline T& DefaultDataSource<T>::get() {
-    if (this->hasNext()) {
-        return this->data[this->currDataIndex++];
-    }
-
-    T* current = new T();
-    return *current;
+    this->miniedData.append(T());
+    return this->miniedData[this->currDataIndex++];
 }
 
 template <typename T>
 inline Vector<T> DefaultDataSource<T>::getSequence(int count) {
-    if (count < this->data.size()) {
-        return this->data;
-    }
-
-    Vector<T> current = this->data;
-    int sizeSustraction = count - this->data.size();
-    for (int i = 0; i < sizeSustraction; ++i) {
-        current.append(T());
+    for (int i = 0; i < count; ++i) {
+        this->miniedData.append(T());
         this->currDataIndex++;
     }
 
-    return current;
+    return this->miniedData;
+}
+
+template <typename T>
+inline bool DefaultDataSource<T>::hasNext() const
+{
+    return true;
 }
 
 #endif

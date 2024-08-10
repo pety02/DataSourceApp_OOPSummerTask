@@ -1,6 +1,7 @@
 #include "GeneratorDataSource.h"
 #include "AlternateDataSource.h"
 #include "FileDataSource.h"
+#include "DefaultDataSource.h"
 #include "ArrayDataSource.h"
 #include <cstring>
 #include <fstream>
@@ -117,8 +118,7 @@ int main() {
     // Creating the base alternate generator.
     DataSource<int>* alternateSrc = new AlternateDataSource<int>(sources, SOURCES_COUNT);
     const int SEQUENCE_SAMPLES_COUNT = 1000;
-    Vector<int> v = alternateSrc->getSequence(SEQUENCE_SAMPLES_COUNT);
-    std::cout << "size = " << v.size() << std::endl;
+    
     // Typing filename of binary file to store in it the sequence of 1000 samples of alternateSrc and writing in this file.
     std::cout << "Enter binary file name: ";
     const int MAX_FILENAME_LENGTH = 256;
@@ -129,14 +129,16 @@ int main() {
         std::cerr << "Failed to open file: " << filename << std::endl;
         return 1;
     }
+    Vector<int> v = alternateSrc->getSequence(SEQUENCE_SAMPLES_COUNT);
     out.write(reinterpret_cast<const char*>(&SEQUENCE_SAMPLES_COUNT), sizeof(SEQUENCE_SAMPLES_COUNT));
     out.write(reinterpret_cast<const char*>(&v), sizeof(v));
     out.close();
 
     // Reading from this file, fileSrc initialization with the read numbers and printing them.
     DataSource<int>* fileSrc = new FileDataSource<int>(filename);
-    std::cout << "vector length: " << fileSrc->getData().size() << std::endl;
-    fileSrc->getData().print(); 
+    Vector<int> miniedData = fileSrc->getSequence(1000);
+    std::cout << "vector length: " << miniedData.size() << std::endl;
+    miniedData.print(); 
 
     // Realising memory.
     delete charsSrc;

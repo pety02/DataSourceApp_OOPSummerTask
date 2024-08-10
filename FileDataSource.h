@@ -11,13 +11,16 @@ class FileDataSource final : public DataSource<T> {
 private:
     char* filename;
 
-protected:
     void copy(const FileDataSource<T>&);
     void destroy();
 
     FileDataSource();
 public:
     FileDataSource(const char*);
+    FileDataSource(const FileDataSource&);
+    FileDataSource(FileDataSource&&) noexcept;
+    FileDataSource& operator=(const FileDataSource&);
+    FileDataSource& operator=(FileDataSource&&) noexcept;
     ~FileDataSource();
 
     Vector<T> getSequence(int) override;
@@ -26,4 +29,3 @@ public:
 #include "FileDataSource.inl"
 
 #endif 
-

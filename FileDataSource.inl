@@ -8,6 +8,8 @@ template<typename T>
 inline void FileDataSource<T>::copy(const FileDataSource<T>& other)
 {
     this->data = other.data;
+    this->miniedData = other.miniedData;
+    this->currDataIndex = other.currDataIndex;
     this->filename = new char[std::strlen(other.filename) + 1];
     this->filename = std::strcpy(this->filename, other.filename);
 }
@@ -22,12 +24,17 @@ template<typename T>
 inline FileDataSource<T>::FileDataSource()
 {
     this->data = Vector<T>();
+    this->miniedData = Vector<T>();
+    this->currDataIndex = 0;
     this->filename = nullptr;
 }
 
 template <typename T>
 inline FileDataSource<T>::FileDataSource(const char* filename)
 {
+    this->data = Vector<T>();
+    this->miniedData = Vector<T>();
+    this->currDataIndex = 0;
     this->filename = new char[std::strlen(filename) + 1];
     this->filename = std::strcpy(this->filename, filename);
 
@@ -44,6 +51,48 @@ inline FileDataSource<T>::FileDataSource(const char* filename)
     file.close();
 }
 
+template <typename T>
+inline FileDataSource<T>::FileDataSource(const FileDataSource<T>& other)
+{
+    this->copy(other);
+}
+
+template <typename T>
+inline FileDataSource<T>::FileDataSource(FileDataSource<T>&& other) noexcept
+{
+    this->copy(other);
+    other.data = Vector<T>();
+    other.miniedData = Vector<T>();
+    other.currDataIndex = 0;
+    other.filename = nullptr;
+}
+
+template <typename T>
+inline FileDataSource<T>& FileDataSource<T>::operator=(const FileDataSource<T>& other)
+{
+    if(this != &other) {
+        this->destroy();
+        this->copy(other);
+    }
+
+    return *this;
+}
+
+template <typename T>
+inline FileDataSource<T>& FileDataSource<T>::operator=(FileDataSource<T>&& other) noexcept
+{
+    if(this != &other) {
+        this->destroy();
+        this->copy(other);
+        other.data = Vector<T>();
+        other.miniedData = Vector<T>();
+        other.currDataIndex = 0;
+        other.filename = nullptr;
+    }
+
+    return *this;
+}
+
 template<typename T>
 inline FileDataSource<T>::~FileDataSource()
 {
@@ -53,13 +102,13 @@ inline FileDataSource<T>::~FileDataSource()
 template <typename T>
 inline Vector<T> FileDataSource<T>::getSequence(int count)
 {
-    Vector<T> current = Vector<T>();
     int minCount = std::min(this->data.size(), count);
     for (int i = 0; i < minCount; ++i) {
-        current.append(this->data[i]);
+        this->miniedData.append(this->data[i]);
         this->currDataIndex++;
     }
-    return current;
+
+    return this->miniedData;
 }
 
 #endif

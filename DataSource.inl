@@ -5,20 +5,28 @@
 #include "DataSource.h"
 
 template <typename T>
+inline Vector<T> DataSource<T>::getAllData() const
+{
+    return this->data;
+}
+
+template <typename T>
 inline DataSource<T>::DataSource()
 {
     this->data = Vector<T>();
+    this->miniedData = Vector<T>();
     this->currDataIndex = 0;
 }
 
 template <typename T>
 inline T& DataSource<T>::get()
 {
-    if (this->hasNext()) {
-        return this->data[this->currDataIndex++];
+    if (!this->hasNext()) {
+        throw std::out_of_range("Index out of bound!");
     }
 
-    throw std::out_of_range("Index out of bound!");
+    this->miniedData.append(this->data[this->currDataIndex]);
+    return this->miniedData[this->currDataIndex++];
 }
 
 template <typename T>
@@ -28,9 +36,11 @@ inline bool DataSource<T>::hasNext() const
 }
 
 template <typename T>
-inline void DataSource<T>::reset()
+inline bool DataSource<T>::reset()
 {
     this->currDataIndex = 0;
+    this->miniedData = Vector<T>();
+    return true;
 }
 
 template <typename T>
@@ -53,9 +63,9 @@ inline DataSource<T>::~DataSource()
 }
 
 template <typename T>
-inline Vector<T> DataSource<T>::getData()
+inline Vector<T> DataSource<T>::getData() const
 {
-    return this->data;
+    return this->miniedData;
 }
 
 #endif
