@@ -9,18 +9,17 @@ class GeneratorDataSource final : public DataSource<T>
 {
 private:
 	Vector<T>(*fnc)(int);
-	int lastGeneratedEl;
-	
-	GeneratorDataSource();
+    Vector<T> miniedData;
+	int lastGeneratedElIndex;
 public:
 	GeneratorDataSource(Vector<T>(*)(int));
-	Vector<T> getSequence(int) override;
 	T& get() override;
-	bool hasNext() const override;
-	bool reset() override;
+    Vector<T> getSequence(int) override; 
+    bool hasNext() const override;
+    bool reset() override; 
+    T& operator()() override;
 };
 
 #include "GeneratorDataSource.inl"
 
 #endif
-

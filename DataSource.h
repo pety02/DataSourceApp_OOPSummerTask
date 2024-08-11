@@ -2,39 +2,18 @@
 #define DATASOURCE_H
 
 #include "Vector.h"
-#include <fstream>
-#include <cmath>
 
 template <typename T>
 class DataSource {
-protected:
-    Vector<T> data;
-    Vector<T> miniedData;
-    int currDataIndex;
-
+private:
 public:
-    DataSource();
-    virtual T& get();
+    virtual T& get() = 0;
     virtual Vector<T> getSequence(int) = 0; 
-    virtual bool hasNext() const;
-    virtual bool reset(); 
-    T& operator()();
+    virtual bool hasNext() const = 0;
+    virtual bool reset() = 0; 
+    virtual T& operator()() = 0;
     explicit operator bool() const {
         return this->hasNext();
-    }
-    virtual ~DataSource();
-    Vector<T> getAllData() const;
-    Vector<T> getData() const ;
-    template <typename U>
-    friend DataSource<T>& operator>>(DataSource<T>& src, U value) {
-        for(int i = 0; i < src.getAllData().size(); ++i) {
-            if(src.getAllData()[i] == value) {
-                src.miniedData.append(value);
-                src.currDataIndex++;
-                break;
-            }
-        }
-        return src;
     }
 };
 

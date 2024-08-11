@@ -7,10 +7,15 @@
 template <typename T>
 class ArrayDataSource final : public DataSource<T> {
 private:
-    ArrayDataSource();
+    Vector<T> data;
+    int currDataIndex;
 public:
     ArrayDataSource(T*, int);
-    Vector<T> getSequence(int) override;
+    T& get() override;
+    Vector<T> getSequence(int) override; 
+    bool hasNext() const override;
+    bool reset() override; 
+    T& operator()() override;
     const ArrayDataSource& operator+(const T&) const;
     ArrayDataSource& operator+=(T);
     ArrayDataSource& operator--();

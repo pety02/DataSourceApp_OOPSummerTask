@@ -6,31 +6,39 @@
 
 template <typename T>
 inline DefaultDataSource<T>::DefaultDataSource() {
-    this->data = Vector<T>();
-    this->miniedData = Vector<T>();
-    this->currDataIndex = 0;
 }
 
 template <typename T>
 inline T& DefaultDataSource<T>::get() {
-    this->miniedData.append(T());
-    return this->miniedData[this->currDataIndex++];
+    return T();
 }
 
 template <typename T>
 inline Vector<T> DefaultDataSource<T>::getSequence(int count) {
+    Vector<T> sequence = Vector<T>();
     for (int i = 0; i < count; ++i) {
-        this->miniedData.append(T());
-        this->currDataIndex++;
+        sequence.append(T());
     }
 
-    return this->miniedData;
+    return sequence;
 }
 
 template <typename T>
 inline bool DefaultDataSource<T>::hasNext() const
 {
     return true;
+}
+
+template <typename T>
+inline bool DefaultDataSource<T>::reset()
+{
+    return true;
+}
+
+template <typename T>
+inline T& DefaultDataSource<T>::operator()()
+{
+    return this->get();
 }
 
 #endif

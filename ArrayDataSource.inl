@@ -5,18 +5,9 @@
 #include "ArrayDataSource.h"
 
 template <typename T>
-inline ArrayDataSource<T>::ArrayDataSource()
-{
-    this->data = Vector<T>();
-    this->miniedData = Vector<T>();
-    this->currDataIndex = 0;
-}
-
-template <typename T>
 inline ArrayDataSource<T>::ArrayDataSource(T* data, int size)
 {
     this->data = Vector<T>();
-    this->miniedData = Vector<T>();
     this->currDataIndex = 0;
     for (int i = 0; i < size; ++i) {
         this->data.append(data[i]);
@@ -24,19 +15,48 @@ inline ArrayDataSource<T>::ArrayDataSource(T* data, int size)
 }
 
 template <typename T>
+inline T& ArrayDataSource<T>::get()
+{
+    if(this->data.size() <= this->currDataIndex) {
+        throw std::out_of_range("Index out of bound!");
+    }
+
+    return this->data[this->currDataIndex++];
+}
+
+template <typename T>
 inline Vector<T> ArrayDataSource<T>::getSequence(int count)
 {
+    Vector<T> sequnece = Vector<T>();
     int minCount = std::min(this->data.size(), count);
     for (int i = 0; i < minCount; ++i) {
         try {
             T el = this->data[i];
-            this->miniedData.append(el);
+            sequnece.append(el);
             this->currDataIndex++;
-        } catch (std::out_of_range& ex) {
+        } catch (std::out_of_range&) {
             break;
         }
     }
-    return this->miniedData;
+    return sequnece;
+}
+
+template <typename T>
+inline bool ArrayDataSource<T>::hasNext() const
+{
+    return this->currDataIndex < this->data.size();
+}
+
+template <typename T>
+inline bool ArrayDataSource<T>::reset()
+{
+    return true;
+}
+
+template <typename T>
+inline T& ArrayDataSource<T>::operator()()
+{
+    return this->get();
 }
 
 template <typename T>
@@ -57,22 +77,14 @@ inline ArrayDataSource<T>& ArrayDataSource<T>::operator+=(T el)
 template <typename T>
 inline ArrayDataSource<T>& ArrayDataSource<T>::operator--()
 {
-    if(0 < this->miniedData.size()) {
-        this->currDataIndex--;
-        this->miniedData.remove(0);
-    }
-
+    this->currDataIndex--;
     return *this;
 }
 
 template <typename T>
 inline ArrayDataSource<T>& ArrayDataSource<T>::operator--(int)
 {
-    if(0 < this->miniedData.size()) {
-        this->currDataIndex--;
-        this->miniedData.remove(0);
-    }
-
+    this->currDataIndex--;
     return *this;
 }
 

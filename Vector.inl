@@ -102,7 +102,7 @@ inline T& Vector<T>::operator[](int index)
 template <typename T>
 inline const T Vector<T>::operator[](int index) const
 {
-    if (this->size <= index) {
+    if (this->index <= index) {
         throw std::out_of_range("Index out of bound!");
     }
 

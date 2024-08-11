@@ -7,22 +7,16 @@
 template <typename T>
 class AlternateDataSource final : public DataSource<T> {
 private:
-    DataSource<T>** sources;
-    int sourcesCount;
-    AlternateDataSource();
-
-    void copy(const AlternateDataSource&);
-    void destroy();
+    Vector<T> data;
+    int currDataIndex;
+    Vector<DataSource<T>*> sources;
 public:
-    AlternateDataSource(const AlternateDataSource&);
-    AlternateDataSource(AlternateDataSource&&) noexcept;
-    AlternateDataSource& operator=(const AlternateDataSource&);
-    AlternateDataSource& operator=(AlternateDataSource&&) noexcept;
     AlternateDataSource(DataSource<T>*[], int); 
-    ~AlternateDataSource();
-
+    T& get() override;
+    Vector<T> getSequence(int) override; 
     bool hasNext() const override;
-    Vector<T> getSequence(int) override;
+    bool reset() override; 
+    T& operator()() override;
 };
 
 #include "AlternateDataSource.inl"

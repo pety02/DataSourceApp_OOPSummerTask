@@ -10,8 +10,10 @@ private:
 public:
     DefaultDataSource();
     T& get() override;
-    Vector<T> getSequence(int) override;
+    Vector<T> getSequence(int) override; 
     bool hasNext() const override;
+    bool reset() override; 
+    T& operator()() override;
 };
 
 #include "DefaultDataSource.inl"

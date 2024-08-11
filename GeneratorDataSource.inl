@@ -5,31 +5,27 @@
 #include "GeneratorDataSource.h"
 
 template<typename T>
-inline GeneratorDataSource<T>::GeneratorDataSource()
+inline GeneratorDataSource<T>::GeneratorDataSource(Vector<T>(*generatorFunc)(int count))
 {
-	this->data = Vector<T>();
+	this->fnc = generatorFunc;
 	this->miniedData = Vector<T>();
-	this->currDataIndex = 0;
-	Vector<T>(*this->fnc)();
-	this->lastGeneratedEl = 0;
+	this->lastGeneratedElIndex = 0;
+}
+
+template<typename T>
+inline T& GeneratorDataSource<T>::get()
+{
+	this->miniedData = this->getSequence(this->lastGeneratedElIndex + 1);
+	T& toBeReturned = this->miniedData[this->lastGeneratedElIndex - 1];
+	return toBeReturned;
 }
 
 template <typename T>
 inline Vector<T> GeneratorDataSource<T>::getSequence(int count)
 {
 	this->miniedData = this->fnc(count);
-	this->lastGeneratedEl = this->miniedData.size();
-	this->currDataIndex += this->miniedData.size();
-	return this->miniedData;
-}
-
-template<typename T>
-inline T& GeneratorDataSource<T>::get()
-{
-	this->miniedData = this->getSequence(this->lastGeneratedEl + 1);
-	T& toBeReturned = this->miniedData[this->lastGeneratedEl - 1];
-	this->currDataIndex++;
-	return toBeReturned;
+	this->lastGeneratedElIndex = this->miniedData.size();
+	return miniedData;
 }
 
 template <typename T>
@@ -41,8 +37,7 @@ inline bool GeneratorDataSource<T>::hasNext() const
 template <typename T>
 inline bool GeneratorDataSource<T>::reset()
 {
-	this->lastGeneratedEl = 0;
-	this->currDataIndex = 0;
+	this->lastGeneratedElIndex = 0;
 	int miniedDataSize = this->miniedData.size();
 	Vector<T> newlyGeneratedData = this->fnc(miniedDataSize);
 	for(int i = 0; i < miniedDataSize; ++i) {
@@ -52,19 +47,14 @@ inline bool GeneratorDataSource<T>::reset()
 	}
 
 	this->miniedData = Vector<T>();
-	this->lastGeneratedEl = 0;
-	this->currDataIndex = 0;
+	this->lastGeneratedElIndex = 0;
     return true;
 }
 
-template<typename T>
-inline GeneratorDataSource<T>::GeneratorDataSource(Vector<T>(*generatorFunc)(int count))
+template <typename T>
+inline T &GeneratorDataSource<T>::operator()()
 {
-	this->fnc = generatorFunc;
-	this->currDataIndex = 0;
-	this->data = generatorFunc(0);
-	this->miniedData = Vector<T>();
-	this->lastGeneratedEl = 0;
+    return this->get();
 }
 
 #endif

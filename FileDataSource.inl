@@ -4,76 +4,85 @@
 
 #include "FileDataSource.h"
 
-template<typename T>
-inline void FileDataSource<T>::copy(const FileDataSource<T>& other)
-{
-    this->data = other.data;
-    this->miniedData = other.miniedData;
-    this->currDataIndex = other.currDataIndex;
+template <typename T>
+inline void FileDataSource<T>::copy(const FileDataSource<T>& other) {
     this->filename = new char[std::strlen(other.filename) + 1];
     this->filename = std::strcpy(this->filename, other.filename);
+    this->data = other.data;
+    this->currData = other.currData;
+    this->currDataIndex = other.currDataIndex;
 }
 
-template<typename T>
-inline void FileDataSource<T>::destroy()
-{
+template <typename T>
+inline void FileDataSource<T>::destroy() {
     delete[] this->filename;
 }
 
-template<typename T>
-inline FileDataSource<T>::FileDataSource()
+template <typename T>
+inline int FileDataSource<T>::countLines() const
 {
+    std::ifstream file(this->filename); 
+    if (!file.is_open()) { 
+        throw std::runtime_error("Cannot open file!");
+    }
+
+    const int BUFFER_mAX_SIZE = 256; 
+    char line[BUFFER_mAX_SIZE];
+    int linesCounter = 0; 
+    while(file.getline(line, BUFFER_mAX_SIZE)) {
+        linesCounter++;
+    }
+
+    file.close();
+    return linesCounter;
+}
+
+template <typename T>
+inline T FileDataSource<T>::convert(const char *str) const
+{
+    assert(str != nullptr && "Input string cannot be null");  // Check for null input
+
+    if (std::is_same<T, int>::value) {
+        return std::atoi(str);
+    } 
+    else if (std::is_same<T, float>::value) {
+        return std::atof(str);
+    } 
+    else if (std::is_same<T, double>::value) {
+        return std::atof(str);
+    } 
+    else if (std::is_same<T, bool>::value) {
+        return std::strcmp(str, "true") == 0 || std::strcmp(str, "1") == 0;
+    } else if (std::is_same<T, char*>::value) {
+        return *str;
+    } else {
+        throw std::invalid_argument("Unsupported type conversion requested");
+    }
+}
+
+template <typename T>
+inline FileDataSource<T>::FileDataSource(const char* filename) {
+    this->filename = new char[std::strlen(filename) + 1];
+    this->filename = std::strcpy(this->filename, filename);
     this->data = Vector<T>();
-    this->miniedData = Vector<T>();
+    this->currData = T();
     this->currDataIndex = 0;
-    this->filename = nullptr;
 }
 
 template <typename T>
-inline FileDataSource<T>::FileDataSource(const char* filename)
-{
-    try {
-        this->data = Vector<T>();
-        this->miniedData = Vector<T>();
-        this->currDataIndex = 0;
-        this->filename = new char[std::strlen(filename) + 1];
-        this->filename = std::strcpy(this->filename, filename);
-        std::ifstream file(filename);
-        if (!file.is_open()) {
-            throw std::runtime_error("Could not open file!");
-        } else {
-            file.read(reinterpret_cast<char*>(&this->data), sizeof(this->data));
-            this->currDataIndex += this->data.size();
-            file.close();
-        }
-    } catch (std::exception& ex) {
-        this->data = Vector<T>();
-        this->miniedData = Vector<T>();
-        this->currDataIndex = 0;
-        this->filename = new char[std::strlen(filename) + 1];
-        this->filename = std::strcpy(this->filename, filename);
-    }
-}
-
-template <typename T>
-inline FileDataSource<T>::FileDataSource(const FileDataSource<T>& other)
-{
+inline FileDataSource<T>::FileDataSource(const FileDataSource<T>& other) {
     this->copy(other);
 }
 
 template <typename T>
-inline FileDataSource<T>::FileDataSource(FileDataSource<T>&& other) noexcept
-{
+inline FileDataSource<T>::FileDataSource(FileDataSource<T>&& other) noexcept {
     this->copy(other);
-    other.data = Vector<T>();
-    other.miniedData = Vector<T>();
-    other.currDataIndex = 0;
     other.filename = nullptr;
+    other.currDataIndex = 0;
 }
 
 template <typename T>
-inline FileDataSource<T>& FileDataSource<T>::operator=(const FileDataSource<T>& other)
-{
+inline FileDataSource<T>& FileDataSource<T>::operator=(const FileDataSource<T>& other) {
     if(this != &other) {
         this->destroy();
         this->copy(other);
@@ -83,36 +92,84 @@ inline FileDataSource<T>& FileDataSource<T>::operator=(const FileDataSource<T>& 
 }
 
 template <typename T>
-inline FileDataSource<T>& FileDataSource<T>::operator=(FileDataSource<T>&& other) noexcept
-{
+inline FileDataSource<T>& FileDataSource<T>::operator=(FileDataSource&& other) noexcept {
     if(this != &other) {
         this->destroy();
         this->copy(other);
-        other.data = Vector<T>();
-        other.miniedData = Vector<T>();
-        other.currDataIndex = 0;
         other.filename = nullptr;
+        other.currDataIndex = 0;
     }
 
     return *this;
 }
 
-template<typename T>
-inline FileDataSource<T>::~FileDataSource()
-{
-    this->destroy();
+template <typename T>
+inline T& FileDataSource<T>::get() {
+    if(!this->hasNext()) {
+        throw std::out_of_range("No more elements to be read!");
+    }
+    std::ifstream file(this->filename); 
+    if (!file.is_open()) { 
+        throw std::runtime_error("Cannot open file!");
+    }
+
+    const int BUFFER_mAX_SIZE = 256; 
+    char line[BUFFER_mAX_SIZE];
+    int linesNumber = this->currDataIndex;
+    int currentLine = 0;
+
+    while (file.getline(line, BUFFER_mAX_SIZE)) {
+        if (currentLine == linesNumber) {
+            this->currData = this->convert(line);
+            this->currDataIndex++;
+            return this->currData; 
+        }
+
+        currentLine++;
+    }
+
+    file.close(); 
+    throw std::out_of_range("No more elements to be read!");
 }
 
 template <typename T>
-inline Vector<T> FileDataSource<T>::getSequence(int count)
-{
-    int minCount = std::min(this->data.size(), count);
-    for (int i = 0; i < minCount; ++i) {
-        this->miniedData.append(this->data[i]);
-        this->currDataIndex++;
+inline Vector<T> FileDataSource<T>::getSequence(int count) {
+    Vector<T> sequence = Vector<T>();
+    for(int i = 0; i < count; ++i) {
+        try {
+            this->currData = this->get();
+            sequence.append(this->currData);
+        } catch (std::out_of_range&) {
+            break;
+        }
     }
 
-    return this->miniedData;
+    return sequence;
+}
+
+template <typename T>
+inline bool FileDataSource<T>::hasNext() const {
+    try {
+        bool _hasNext = this->currDataIndex < this->countLines();
+        return _hasNext;
+    } catch(std::runtime_error&) {
+        return false;
+    }
+}
+
+template <typename T>
+inline bool FileDataSource<T>::reset() {
+    return true;
+}
+
+template <typename T>
+inline T& FileDataSource<T>::operator()() {
+    return this->get();
+}
+
+template <typename T>
+inline FileDataSource<T>::~FileDataSource() {
+    this->destroy();
 }
 
 #endif
