@@ -19,14 +19,14 @@ int fibHelper(int n) {
 }
 
 Vector<int> fib(int count) {
-    Vector<int>* v = new Vector<int>();
+    Vector<int> v;
     int initial = 0;
     while(initial < count) {
-        v->append(fibHelper(initial));
+        v.append(fibHelper(initial));
         initial++;
     }
 
-    return *v;
+    return v;
 }
 
 int primeNumbersHelper(int n) {
@@ -34,23 +34,23 @@ int primeNumbersHelper(int n) {
 }
 
 Vector<int> getPrimeNumbers(int count) {
-    Vector<int>* v = new Vector<int>();
+    Vector<int> v;
     int initial = 0, counter = 0;
     while(counter < count) {
         initial = primeNumbersHelper(initial);
 
-        if(v->size() == 0) {
-            v->append(initial);
+        if(v.size() == 0) {
+            v.append(initial);
             counter++;
         }
-        int lastIndex = v->size() - 1;
-        if((*v)[lastIndex] < initial) {
-            v->append(initial);
+        int lastIndex = v.size() - 1;
+        if(v[lastIndex] < initial) {
+            v.append(initial);
             counter++;
         }
     }
 
-    return *v;
+    return v;
 }
 
 int randHelper(int n) {
@@ -58,12 +58,12 @@ int randHelper(int n) {
 }
 
 Vector<int> rand(int count) {
-    Vector<int>* v = new Vector<int>();
+    Vector<int> v;
     for(int i = 0; i < count; ++i) {
-        v->append(randHelper(i));
+        v.append(randHelper(i));
     }
 
-    return *v;
+    return v;
 }
 
 char* generateWordHelper(char* word) {
@@ -77,13 +77,13 @@ char* generateWordHelper(char* word) {
 }
 
 Vector<char*> generateWord(int count) {
-    Vector<char*>* v = new Vector<char*>();
+    Vector<char*> v;
     for(int i = 0; i < count; ++i) {
         char* currWord = new char[10];
-        v->append(generateWordHelper(currWord));
+        v.append(generateWordHelper(currWord));
     }
 
-    return *v;
+    return v;
 }
 
 int main() { 
@@ -138,7 +138,7 @@ int main() {
     // Typing filename of binary file to store in it the sequence of 1000 samples of alternateSrc and writing in this file.
     std::cout << "Enter binary file name: ";
     const int MAX_FILENAME_LENGTH = 256;
-    char* filename = new char [MAX_FILENAME_LENGTH];
+    char filename[MAX_FILENAME_LENGTH];
     std::cin.getline(filename, MAX_FILENAME_LENGTH);
     std::ofstream out(filename, std::ios::binary);
     if (!out) {
@@ -166,9 +166,7 @@ int main() {
     in.close();
 
     // Writing the read numbers in a txt file with name typed by the user.
-    std::cout << "Enter text file name: ";
-    char* txtFilename = new char [MAX_FILENAME_LENGTH];
-    std::cin.getline(txtFilename, MAX_FILENAME_LENGTH);
+    char txtFilename[] = "numbers.txt";
     std::ofstream txtOut(txtFilename);
     if(!txtOut) {
         std::cerr << "Failed to open file: " << txtFilename << std::endl;
@@ -192,9 +190,13 @@ int main() {
         std::cout << miniedData[i] << std::endl;
     } 
 
-    // Realising memory.
-    delete[] filename;
-    delete[] txtFilename;
+    // Releasing data
+    delete oddNumbersGen;
+    delete randNumbersGen;
+    delete fibonacciGen;
+    delete sources;
+    delete alternateSrc;
+    delete fileSrc;
 
     return 0;
 }

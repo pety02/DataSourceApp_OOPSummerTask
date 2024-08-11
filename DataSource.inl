@@ -4,4 +4,9 @@
 
 #include "DataSource.h"
 
+template <typename T>
+inline DataSource<T>::~DataSource()
+{
+}
+
 #endif

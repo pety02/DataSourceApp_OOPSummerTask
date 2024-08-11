@@ -7,7 +7,6 @@
 template <typename T>
 inline ArrayDataSource<T>::ArrayDataSource(T* data, int size)
 {
-    this->data = Vector<T>();
     this->currDataIndex = 0;
     for (int i = 0; i < size; ++i) {
         this->data.append(data[i]);
@@ -15,7 +14,7 @@ inline ArrayDataSource<T>::ArrayDataSource(T* data, int size)
 }
 
 template <typename T>
-inline T& ArrayDataSource<T>::get()
+inline T ArrayDataSource<T>::get()
 {
     if(this->data.size() <= this->currDataIndex) {
         throw std::out_of_range("Index out of bound!");
@@ -54,7 +53,7 @@ inline bool ArrayDataSource<T>::reset()
 }
 
 template <typename T>
-inline T& ArrayDataSource<T>::operator()()
+inline T ArrayDataSource<T>::operator()()
 {
     return this->get();
 }

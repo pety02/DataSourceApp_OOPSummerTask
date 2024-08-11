@@ -53,8 +53,6 @@ inline Vector<T>::Vector(Vector<T>&& other) noexcept
 {
     this->copy(other);
     other.data = nullptr;
-    other.capacity = 8;
-    other.index = 0;
 }
 
 template <typename T>
@@ -76,8 +74,6 @@ inline Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept
         this->copy(other);
 
         other.data = nullptr;
-        other.capacity = 8;
-        other.index = 0;
     }
 
     return *this;
@@ -92,7 +88,7 @@ inline Vector<T>::~Vector()
 template <typename T>
 inline T& Vector<T>::operator[](int index)
 {
-    if (this->index <= index) {
+    if (index < 0 || this->index <= index) {
         throw std::out_of_range("Index out of bound!");
     }
 
@@ -102,7 +98,7 @@ inline T& Vector<T>::operator[](int index)
 template <typename T>
 inline const T Vector<T>::operator[](int index) const
 {
-    if (this->index <= index) {
+    if (index < 0 || this->index <= index) {
         throw std::out_of_range("Index out of bound!");
     }
 

@@ -40,7 +40,7 @@ inline int FileDataSource<T>::countLines() const
 template <typename T>
 inline T FileDataSource<T>::convert(const char *str) const
 {
-    assert(str != nullptr && "Input string cannot be null");  // Check for null input
+    assert(str != nullptr); 
 
     if (std::is_same<T, int>::value || std::is_same<T, unsigned int>::value
     || std::is_same<T, long>::value || std::is_same<T, long long>::value
@@ -63,7 +63,6 @@ template <typename T>
 inline FileDataSource<T>::FileDataSource(const char* filename) {
     this->filename = new char[std::strlen(filename) + 1];
     this->filename = std::strcpy(this->filename, filename);
-    this->data = Vector<T>();
     this->currData = T();
     this->currDataIndex = 0;
 }
@@ -77,7 +76,6 @@ template <typename T>
 inline FileDataSource<T>::FileDataSource(FileDataSource<T>&& other) noexcept {
     this->copy(other);
     other.filename = nullptr;
-    other.currDataIndex = 0;
 }
 
 template <typename T>
@@ -95,15 +93,15 @@ inline FileDataSource<T>& FileDataSource<T>::operator=(FileDataSource&& other) n
     if(this != &other) {
         this->destroy();
         this->copy(other);
+
         other.filename = nullptr;
-        other.currDataIndex = 0;
     }
 
     return *this;
 }
 
 template <typename T>
-inline T& FileDataSource<T>::get() {
+inline T FileDataSource<T>::get() {
     if(!this->hasNext()) {
         throw std::out_of_range("No more elements to be read!");
     }
@@ -166,7 +164,7 @@ inline bool FileDataSource<T>::reset() {
 }
 
 template <typename T>
-inline T& FileDataSource<T>::operator()() {
+inline T FileDataSource<T>::operator()() {
     return this->get();
 }
 

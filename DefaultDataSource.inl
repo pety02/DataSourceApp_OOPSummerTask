@@ -9,8 +9,10 @@ inline DefaultDataSource<T>::DefaultDataSource() {
 }
 
 template <typename T>
-inline T& DefaultDataSource<T>::get() {
-    return T();
+inline T DefaultDataSource<T>::get() {
+    Vector<T> sequence = Vector<T>(this->getSequence(1));
+    T el = sequence[0];
+    return el;
 }
 
 template <typename T>
@@ -36,7 +38,7 @@ inline bool DefaultDataSource<T>::reset()
 }
 
 template <typename T>
-inline T& DefaultDataSource<T>::operator()()
+inline T DefaultDataSource<T>::operator()()
 {
     return this->get();
 }

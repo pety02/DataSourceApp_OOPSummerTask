@@ -26,11 +26,11 @@ public:
     FileDataSource(FileDataSource&&) noexcept;
     FileDataSource& operator=(const FileDataSource&);
     FileDataSource& operator=(FileDataSource&&) noexcept;
-    T& get() override;
+    T get()  override;
     Vector<T> getSequence(int) override; 
     bool hasNext() const override;
     bool reset() override; 
-    T& operator()() override;
+    T operator()() override;
     ~FileDataSource();
 };
 

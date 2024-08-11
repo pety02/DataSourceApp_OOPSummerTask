@@ -13,11 +13,11 @@ private:
 	int lastGeneratedElIndex;
 public:
 	GeneratorDataSource(Vector<T>(*)(int));
-	T& get() override;
+	T get() override;
     Vector<T> getSequence(int) override; 
     bool hasNext() const override;
     bool reset() override; 
-    T& operator()() override;
+    T operator()() override;
 };
 
 #include "GeneratorDataSource.inl"

@@ -8,12 +8,11 @@ template<typename T>
 inline GeneratorDataSource<T>::GeneratorDataSource(Vector<T>(*generatorFunc)(int count))
 {
 	this->fnc = generatorFunc;
-	this->miniedData = Vector<T>();
 	this->lastGeneratedElIndex = 0;
 }
 
 template<typename T>
-inline T& GeneratorDataSource<T>::get()
+inline T GeneratorDataSource<T>::get()  
 {
 	this->miniedData = this->getSequence(this->lastGeneratedElIndex + 1);
 	T& toBeReturned = this->miniedData[this->lastGeneratedElIndex - 1];
@@ -52,7 +51,7 @@ inline bool GeneratorDataSource<T>::reset()
 }
 
 template <typename T>
-inline T &GeneratorDataSource<T>::operator()()
+inline T GeneratorDataSource<T>::operator()()
 {
     return this->get();
 }
