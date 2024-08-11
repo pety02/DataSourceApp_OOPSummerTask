@@ -3,9 +3,6 @@
 #include "FileDataSource.h"
 #include "DefaultDataSource.h"
 #include "ArrayDataSource.h"
-#include <cstdlib>
-#include <cstring>
-#include <fstream>
 
 int fibHelper(int n) {
     if(n == 0) {
