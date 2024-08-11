@@ -92,7 +92,12 @@ int main() {
     wordsGeneratorFnc = &generateWord;
     const int WORDS_SAMPLES_COUNT = 25;
     DataSource<char*>* charsSrc = new GeneratorDataSource<char*>(wordsGeneratorFnc);
-    charsSrc->getSequence(WORDS_SAMPLES_COUNT).print();
+    std::cout << std::endl << "25 random strings generated:" << std::endl << std::endl;
+    Vector<char*> randomStrings = charsSrc->getSequence(WORDS_SAMPLES_COUNT);
+    for(int i = 0; i < randomStrings.size(); ++i) {
+        std::cout << randomStrings[i] << std::endl;
+    }
+    std::cout << std::endl;
 
     // Second sub-task
     // Creating pointers to helper functions above.
@@ -110,13 +115,21 @@ int main() {
     // Creating an array of the generators above.
     const int SOURCES_COUNT = 3;
     const int FIBONACCI_SAMPLES_COUNT = 25;
+    Vector<int> fibonacci25NumbersSequence;
+    try {
+        fibonacci25NumbersSequence = fibonacciGen->getSequence(FIBONACCI_SAMPLES_COUNT);
+    } catch (std::exception& ex) {
+        std::cerr << "Exception occured: " << ex.what() << std::endl;
+        return 1;
+    }
     DataSource<int>* sources[SOURCES_COUNT] = {
         oddNumbersGen, 
         randNumbersGen, 
-        new ArrayDataSource<int>(fibonacciGen
-            ->getSequence(FIBONACCI_SAMPLES_COUNT)
-            .getData(), FIBONACCI_SAMPLES_COUNT)
-        };
+        new ArrayDataSource<int>(
+            fibonacci25NumbersSequence
+            .getData(), FIBONACCI_SAMPLES_COUNT
+        )
+    };
     
     // Creating the base alternate generator.
     DataSource<int>* alternateSrc = new AlternateDataSource<int>(sources, SOURCES_COUNT);
@@ -132,8 +145,14 @@ int main() {
         std::cerr << "Failed to open file: " << filename << std::endl;
         return 1;
     }
-    Vector<int> v = alternateSrc->getSequence(SEQUENCE_SAMPLES_COUNT);
-    out.write(reinterpret_cast<const char*>(&v), sizeof(v));
+    Vector<int> toBeStoredData;
+    try {
+        toBeStoredData = alternateSrc->getSequence(SEQUENCE_SAMPLES_COUNT);
+    } catch(std::exception& ex) {
+        std::cerr << "Exception occured: " << ex.what() << std::endl;
+        return 1;
+    }
+    out.write(reinterpret_cast<const char*>(&toBeStoredData), sizeof(toBeStoredData));
     out.close();
 
     // Reading the numbers from the binary file.
@@ -161,9 +180,17 @@ int main() {
 
     // Reading from the txt file, fileSrc initialization with the read numbers and printing them.
     DataSource<int>* fileSrc = new FileDataSource<int>(txtFilename);
-    Vector<int> miniedData = fileSrc->getSequence(SEQUENCE_SAMPLES_COUNT);
-    std::cout << "vector length: " << miniedData.size() << std::endl;
-    miniedData.print(); 
+    Vector<int> miniedData;
+    try {
+        miniedData = fileSrc->getSequence(SEQUENCE_SAMPLES_COUNT);
+    } catch (std::exception& ex) {
+        std::cerr << "Failed to open file: " << txtFilename << std::endl;
+        return 1;
+    }
+    std::cout << std::endl << "Read numbers count: " << miniedData.size() << std::endl << std::endl;
+    for(int i = 0; i < miniedData.size(); ++i) {
+        std::cout << miniedData[i] << std::endl;
+    } 
 
     // Realising memory.
     delete[] filename;

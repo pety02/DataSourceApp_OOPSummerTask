@@ -42,17 +42,16 @@ inline T FileDataSource<T>::convert(const char *str) const
 {
     assert(str != nullptr && "Input string cannot be null");  // Check for null input
 
-    if (std::is_same<T, int>::value) {
+    if (std::is_same<T, int>::value || std::is_same<T, unsigned int>::value
+    || std::is_same<T, long>::value || std::is_same<T, long long>::value
+    || std::is_same<T, unsigned long>::value || std::is_same<T, unsigned long long>::value) {
         return std::atoi(str);
     } 
-    else if (std::is_same<T, float>::value) {
-        return std::atof(str);
-    } 
-    else if (std::is_same<T, double>::value) {
+    else if (std::is_same<T, float>::value || std::is_same<T, double>::value || std::is_same<T, long double>::value) {
         return std::atof(str);
     } 
     else if (std::is_same<T, bool>::value) {
-        return std::strcmp(str, "true") == 0 || std::strcmp(str, "1") == 0;
+        return std::strcmp(str, "true") == 0 || std::strcmp(str, "1") == 0; 
     } else if (std::is_same<T, char*>::value) {
         return *str;
     } else {
@@ -120,9 +119,13 @@ inline T& FileDataSource<T>::get() {
 
     while (file.getline(line, BUFFER_mAX_SIZE)) {
         if (currentLine == linesNumber) {
-            this->currData = this->convert(line);
-            this->currDataIndex++;
-            return this->currData; 
+            try {
+                this->currData = this->convert(line);
+                this->currDataIndex++;
+                return this->currData; 
+            } catch(std::invalid_argument& ex) {
+                throw ex;
+            }
         }
 
         currentLine++;
